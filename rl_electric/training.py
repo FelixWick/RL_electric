@@ -25,7 +25,7 @@ def main(controller):
     state_size = len(state)
 
     if controller == "DQN":
-        episodes = 1000
+        episodes = 600
         action_size = 11
         agent = DQNAgent(state_size, action_size)
     elif controller == "PG":
