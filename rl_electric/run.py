@@ -35,6 +35,16 @@ def main(controller):
 
     delta_Is = []
 
+    if controller == "DQN":
+        agent = DQNAgent(state_size, action_size)
+        agent.load("DQN_model.pth")
+    elif controller == "PG":
+        agent = PolicyGradientAgent(state_size, action_size, continuous=False)
+        agent.load("PG_model.pth")
+    elif controller == "PGcont":
+        agent = PolicyGradientAgent(state_size, 1, continuous=True)
+        agent.load("PGcont_model.pth")
+
     for i in range(1, n_steps):
         if i % 10 - 1 == 0:
             if controller == "PID":
@@ -50,21 +60,11 @@ def main(controller):
                 action = K_p * delta_Is[-1] + K_i * integral_error + K_d * gradient_error
                 action = np.clip(action, env.U_min - env.U_base, env.U_max - env.U_base)
 
-            elif controller == "DQN":
-                agent = DQNAgent(state_size, action_size)
-                agent.load("DQN_model.pth")
-                action_node = agent.select_action(np.reshape(state, [1, state_size]), inference=True)
-                action = action_node / (action_size - 1) * env.U_max - env.U_base
-
-            elif controller == "PG":
-                agent = PolicyGradientAgent(state_size, action_size, continuous=False)
-                agent.load("PG_model.pth")
+            elif controller in ["DQN", "PG"]:
                 action_node = agent.select_action(np.reshape(state, [1, state_size]), inference=True)
                 action = action_node / (action_size - 1) * env.U_max - env.U_base
     
             elif controller == "PGcont":
-                agent = PolicyGradientAgent(state_size, 1, continuous=True)
-                agent.load("PGcont_model.pth")
                 action = agent.select_action(np.reshape(state, [1, state_size]), inference=True).detach().cpu().item()
                 action = np.clip(action, env.U_min - env.U_base, env.U_max - env.U_base)
 
@@ -79,8 +79,6 @@ def main(controller):
 
         returns += reward
         Irefs[i] = env.I_ref
-        # Is[i] = state[0]
-        # Us[i] = state[1]
         Is[i] = state[0] + env.I_ref
         Us[i] = state[1] + env.U_base
 

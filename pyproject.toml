@@ -10,6 +10,7 @@ torch = {version = "1.13.0", source = "torch_cu116"}
 numpy = "^1.26.4"
 scipy = "^1.14.1"
 matplotlib = "^3.9.2"
+pandas = "^2.2.3"
 ipython = "^8.27.0"
 
 [[tool.poetry.source]]

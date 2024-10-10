@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 
 
@@ -39,7 +37,6 @@ class CircuitEnv:
         self.t = 0
         self.I = 0
 
-        # self.state = [self.I, self.U_base]
         self.state = [self.I - self.I_ref, 0]
         return self.state
 
@@ -60,7 +57,6 @@ class CircuitEnv:
 
         self.I = max(0, self.I)
 
-        # self.state = [self.I, U]
         self.state = [self.I - self.I_ref, action]
 
         reward = -np.abs(self.I - self.I_ref)
